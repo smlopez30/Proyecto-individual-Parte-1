@@ -8,7 +8,6 @@ from surprise.model_selection import train_test_split
 from surprise import accuracy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-from sklearn.metrics import jaccard_score
 from typing import List
 from typing import Union
 
