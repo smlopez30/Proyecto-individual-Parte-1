@@ -1,11 +1,5 @@
 import pandas as pd
-import json
 from fastapi import FastAPI
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
-from surprise import Reader, Dataset, SVD
-from surprise.model_selection import train_test_split
-from surprise import accuracy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from typing import List
@@ -14,9 +8,26 @@ from typing import Union
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
+# Reemplazar valores NaN por cadenas vacías en las columnas relevantes
+peliculas['franquicia'].fillna('', inplace=True)
+peliculas['genres'].fillna('', inplace=True)
+peliculas['idioma'].fillna('', inplace=True)
+peliculas['eslogan'].fillna('', inplace=True)
+
+# Concatenamos las características relevantes en un solo campo para el análisis TF-IDF
+peliculas['combined_features'] = peliculas['franquicia'] + ' ' + peliculas['genres']
+
+# Creamos una matriz TF-IDF con las características de todas las películas
+tfidf = TfidfVectorizer(stop_words='english')
+features_matrix = tfidf.fit_transform(peliculas['combined_features'].fillna(''))
+
+# Calcular la similitud de coseno entre las características de todas las películas
+cosine_sim = linear_kernel(features_matrix, features_matrix)
+
+indices = pd.Series(peliculas.index, index=peliculas['title']).drop_duplicates()
+
 # Crear la instancia de FastAPI
 app = FastAPI()
-
 
 @app.get('/peliculas_idioma/{idioma}')
 def peliculas_idioma(idioma:str):
@@ -27,9 +38,6 @@ def peliculas_idioma(idioma:str):
     cantidad_peliculas = len(peliculas_filtradas)
 
     return {'idioma': idioma, 'cantidad': cantidad_peliculas}
-
-
-
 
 @app.get('/peliculas_duracion/{pelicula}')
 def peliculas_duracion(pelicula: str):
@@ -45,7 +53,7 @@ def peliculas_duracion(pelicula: str):
     peliculas_filtradas = peliculas[peliculas['title_lower'] == pelicula]
 
     # Eliminar la columna temporal 'title_lower'
-    peliculas_filtradas.drop(columns=['title_lower'], inplace=True)
+    peliculas.drop(columns=['title_lower'], inplace=True)
 
     # Verificar si se encontraron películas
     if peliculas_filtradas.empty:
@@ -55,8 +63,6 @@ def peliculas_duracion(pelicula: str):
     peliculas_coincidentes = peliculas_filtradas[['title', 'runtime', 'release_year']].to_dict(orient='records')
 
     return {'pelicula': peliculas_coincidentes}
-
-
 
 @app.get('/peliculas_nombre/{pelicula}')
 def peliculas_nombre(pelicula: str):
@@ -70,15 +76,15 @@ def peliculas_nombre(pelicula: str):
     # Filtrar el DataFrame para obtener las películas que contienen la cadena ingresada
     peliculas_filtradas = peliculas[peliculas['title_lower'].str.contains(pelicula, case=False)]
 
-    # Eliminar la columna temporal 'title_lower'
-    peliculas.drop(columns=['title_lower'], inplace=True)
-
     # Verificar si se encontraron películas
     if peliculas_filtradas.empty:
         return {'pelicula': pelicula, 'peliculas_coincidentes': []}
 
     # Obtener la lista de nombres de películas que coinciden con las letras ingresadas
     peliculas_coincidentes = peliculas_filtradas['title'].tolist()
+
+    # Eliminar la columna temporal 'title_lower'
+    peliculas.drop(columns=['title_lower'], inplace=True)
 
     return {'pelicula': pelicula, 'peliculas_coincidentes': peliculas_coincidentes}
 
@@ -124,10 +130,8 @@ def get_director(nombre_director: str):
     # Calcular el éxito del director medido a través del retorno (promedio de ganancias de sus películas)
     retorno_total_director = peliculas_director['revenue'].mean()
 
-    # Crear una lista para almacenar la información de cada película del director
+    # Crear una lista de información de cada película del director
     peliculas_info = []
-
-    # Iterar sobre las películas del director y obtener la información requerida
     for _, pelicula in peliculas_director.iterrows():
         # Verificar si el costo de la película es cero para evitar la división por cero
         if pelicula['budget'] != 0:
@@ -150,30 +154,13 @@ def get_director(nombre_director: str):
         'peliculas': peliculas_info
     }
 
-# Reemplazar valores NaN por cadenas vacías en las columnas relevantes
-peliculas['franquicia'].fillna('', inplace=True)
-peliculas['genres'].fillna('', inplace=True)
-peliculas['idioma'].fillna('', inplace=True)
-peliculas['eslogan'].fillna('', inplace=True)
-
-# Concatenamos las características relevantes en un solo campo para el análisis TF-IDF
-peliculas['combined_features'] = peliculas['franquicia'] + ' ' + peliculas['genres']
-
-# Creamos una matriz TF-IDF con las características de todas las películas
-tfidf = TfidfVectorizer(stop_words='english')
-features_matrix = tfidf.fit_transform(peliculas['combined_features'].fillna(''))
-
-# Calcular la similitud de coseno entre las características de todas las películas
-cosine_sim = linear_kernel(features_matrix, features_matrix)
-
-indices = pd.Series(peliculas.index, index=peliculas['title']).drop_duplicates()
-
-# Definir endpoint para obtener recomendaciones de películas por características
 @app.get('/recomendacion/caracteristicas/{titulo}', response_model=Union[List[str], dict])
 def recommend_movies_by_features(titulo: str):
     try:
         idx = indices[indices.index == titulo].iloc[0]
         sim_scores = list(enumerate(cosine_sim[idx]))
+        # Eliminar puntuaciones de baja similitud para reducir el uso de memoria
+        sim_scores = [item for item in sim_scores if item[1] > 0.1]
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
         sim_scores = sim_scores[1:6]
         movie_indices = [i[0] for i in sim_scores]
@@ -183,7 +170,7 @@ def recommend_movies_by_features(titulo: str):
         return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
     except IndexError:
         return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
-    
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
