@@ -42,30 +42,6 @@ def peliculas_duracion(pelicula: str):
 
     return {'pelicula': peliculas_coincidentes}
 
-@app.get('/peliculas_nombre/{pelicula}')
-def peliculas_nombre(pelicula: str):
-    '''Ingresas la película, retornando las películas que coinciden con el nombre'''
-    # Convertir la cadena de búsqueda a minúsculas
-    pelicula = pelicula.lower()
-
-    # Convertir los títulos de las películas en el DataFrame a minúsculas
-    peliculas['title_lower'] = peliculas['title'].str.lower()
-
-    # Filtrar el DataFrame para obtener las películas que contienen la cadena ingresada
-    peliculas_filtradas = peliculas[peliculas['title_lower'].str.contains(pelicula, case=False)]
-
-    # Verificar si se encontraron películas
-    if peliculas_filtradas.empty:
-        return {'pelicula': pelicula, 'peliculas_coincidentes': []}
-
-    # Obtener la lista de nombres de películas que coinciden con las letras ingresadas
-    peliculas_coincidentes = peliculas_filtradas['title'].tolist()
-
-    # Eliminar la columna temporal 'title_lower'
-    peliculas.drop(columns=['title_lower'], inplace=True)
-
-    return {'pelicula': pelicula, 'peliculas_coincidentes': peliculas_coincidentes}
-
 @app.get('/franquicia/{franquicia}')
 def franquicia(franquicia: str):
     '''Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio'''
@@ -89,6 +65,23 @@ def franquicia(franquicia: str):
     ganancia_promedio = peliculas_franquicia['revenue'].mean()
 
     return {'franquicia': franquicia, 'cantidad': cantidad_peliculas, 'ganancia_total': ganancia_total, 'ganancia_promedio': ganancia_promedio}
+
+@app.get('/peliculas_pais/{pais}')
+def peliculas_pais(pais: str):
+    '''Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo.'''
+    peliculas_pais = peliculas[peliculas['pais'] == pais]
+    cantidad_peliculas = len(peliculas_pais)
+    return f'Se produjeron {cantidad_peliculas} películas en el país {pais}'
+
+# Nueva función para obtener el revenue total y la cantidad de películas producidas por una productora específica
+@app.get('/productoras_exitosas/{productora}')
+def productoras_exitosas(productora: str):
+    '''Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.'''
+    peliculas_productora = peliculas[peliculas['productora'] == productora]
+    cantidad_peliculas = len(peliculas_productora)
+    revenue_total = peliculas_productora['revenue'].sum()
+    return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
+
 
 @app.get('/get_director/{nombre_director}')
 def get_director(nombre_director: str):
