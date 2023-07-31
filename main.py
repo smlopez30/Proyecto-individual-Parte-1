@@ -7,9 +7,10 @@ peliculas = pd.read_csv('datasets/peliculas.csv')
 # Crear la instancia de FastAPI
 app = FastAPI()
 
-@app.get('/peliculas_idioma/{idioma}')
+@app.get('/peliculas_idioma/{ej. es}')
 def peliculas_idioma(idioma:str):
     '''Ingresas el idioma, retornando la cantidad de peliculas producidas en el mismo'''
+    
     peliculas_filtradas = peliculas[peliculas['idioma'] == idioma]
 
     # Contar la cantidad de películas en el idioma especificado
@@ -69,8 +70,12 @@ def franquicia(franquicia: str):
 @app.get('/peliculas_pais/{pais}')
 def peliculas_pais(pais: str):
     '''Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo.'''
-    peliculas_pais = peliculas[peliculas['pais'] == pais]
+    # Verificar si el país ingresado está presente en la columna 'pais' de cada celda
+    peliculas_pais = peliculas[peliculas['pais'].str.contains(pais, case=False)]
+
+    # Calcular la cantidad de películas en el país especificado
     cantidad_peliculas = len(peliculas_pais)
+
     return f'Se produjeron {cantidad_peliculas} películas en el país {pais}'
 
 # Nueva función para obtener el revenue total y la cantidad de películas producidas por una productora específica
