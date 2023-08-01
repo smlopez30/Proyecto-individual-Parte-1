@@ -1,5 +1,6 @@
 import pandas as pd
 from fastapi import FastAPI
+import httpx
 
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
@@ -129,6 +130,20 @@ def get_director(nombre_director: str):
         'retorno_total_director': retorno_total_director,
         'peliculas': peliculas_info
     }
+    
+@app.get('/recomendaciones/{titulo}')
+async def get_recomendaciones(titulo: str):
+    # Realizar una solicitud HTTP GET a la otra API con el título como parámetro
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f'https://sistema-de-recomendacion-pby2.onrender.com/recomendacion/caracteristicas/{titulo}')
+
+    # Verificar si la solicitud fue exitosa (código de respuesta 200)
+    if response.status_code == 200:
+        recomendaciones = response.json()
+        return recomendaciones
+    else:
+        return {'message': f'Error al obtener las recomendaciones para la película "{titulo}"'}
+
 
 if __name__ == "__main__":
     import uvicorn
