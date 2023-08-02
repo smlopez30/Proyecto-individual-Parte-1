@@ -1,6 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI
-import httpx
+from typing import List
+
 
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
