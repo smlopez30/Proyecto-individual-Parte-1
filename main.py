@@ -1,6 +1,8 @@
 import pandas as pd
 from fastapi import FastAPI
 from typing import List
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 
 
 # Cargar el dataset "peliculas"
@@ -139,7 +141,7 @@ def recomendacion(titulo: str):
         titulo = titulo.lower()
 
         # Obtener el índice de la película en el DataFrame
-        idx = indices[indices.index == titulo].iloc[0]
+        idx = indices[titulo]
 
         # Obtener los scores de similitud de la película con todas las demás
         sim_scores = list(enumerate(cosine_sim[idx]))
