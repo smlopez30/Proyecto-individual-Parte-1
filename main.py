@@ -171,6 +171,3 @@ def recomendacion(titulo: str):
     except IndexError:
         return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
