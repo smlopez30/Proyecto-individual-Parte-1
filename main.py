@@ -131,18 +131,36 @@ def get_director(nombre_director: str):
         'peliculas': peliculas_info
     }
     
-@app.get('/recomendaciones/{titulo}')
-async def get_recomendaciones(titulo: str):
-    # Realizar una solicitud HTTP GET a la otra API con el título como parámetro
-    async with httpx.AsyncClient() as client:
-        response = await client.get(f'https://sistema-de-recomendacion-pby2.onrender.com/recomendacion/caracteristicas/{titulo}')
+@app.get('/recomendacion/{titulo}', response_model=List[str])
+def recomendacion(titulo: str):
+    try:
+        # Convertir el título de búsqueda a minúsculas
+        titulo = titulo.lower()
 
-    # Verificar si la solicitud fue exitosa (código de respuesta 200)
-    if response.status_code == 200:
-        recomendaciones = response.json()
-        return recomendaciones
-    else:
-        return {'message': f'Error al obtener las recomendaciones para la película "{titulo}"'}
+        # Obtener el índice de la película en el DataFrame
+        idx = indices[indices.index == titulo].iloc[0]
+
+        # Obtener los scores de similitud de la película con todas las demás
+        sim_scores = list(enumerate(cosine_sim[idx]))
+
+        # Eliminar puntuaciones de baja similitud
+        sim_scores = [item for item in sim_scores if item[1] > 0.1]
+
+        # Ordenar las películas según el score de similitud en orden descendente
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+        # Obtener los índices de las películas más similares
+        movie_indices = [i[0] for i in sim_scores[:5]]  # Recomendar las 5 películas más similares
+
+        # Obtener los títulos de las películas recomendadas
+        movie_titles = peliculas.iloc[movie_indices]['title'].tolist()
+
+        return movie_titles
+
+    except KeyError:
+        return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
+    except IndexError:
+        return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
 
 
 if __name__ == "__main__":
