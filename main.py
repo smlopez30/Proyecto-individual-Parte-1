@@ -8,6 +8,9 @@ from sklearn.metrics.pairwise import linear_kernel
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
+# Manejar los valores NaN en la columna 'overview' (resumen)
+peliculas['overview'].fillna('', inplace=True)
+
 # Preprocesamiento de texto para la columna 'overview'
 tfidf_vectorizer = TfidfVectorizer(stop_words='english')
 tfidf_matrix = tfidf_vectorizer.fit_transform(peliculas['overview'])
