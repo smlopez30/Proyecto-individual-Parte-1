@@ -8,6 +8,12 @@ from sklearn.metrics.pairwise import linear_kernel
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
+# Preprocesamiento de texto para la columna 'descripcion'
+tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf_vectorizer.fit_transform(peliculas['descripcion'])
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+indices = pd.Series(peliculas.index, index=peliculas['title']).drop_duplicates()
+
 # Crear la instancia de FastAPI
 app = FastAPI()
 
@@ -164,7 +170,6 @@ def recomendacion(titulo: str):
         return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
     except IndexError:
         return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
-
 
 if __name__ == "__main__":
     import uvicorn
