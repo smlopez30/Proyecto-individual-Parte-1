@@ -9,13 +9,16 @@ from sklearn.metrics.pairwise import linear_kernel
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
 
-# Manejar los valores NaN en la columna 'overview' (resumen)
-peliculas['overview'].fillna('', inplace=True)
+# Concatenamos las características relevantes en un solo campo para el análisis TF-IDF
+peliculas['combined_features'] = peliculas['franquicia'] + ' ' + peliculas['genres']
 
-# Preprocesamiento de texto para la columna 'overview'
-tfidf_vectorizer = TfidfVectorizer(stop_words='english')
-tfidf_matrix = tfidf_vectorizer.fit_transform(peliculas['overview'])
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+# Creamos una matriz TF-IDF con las características de todas las películas
+tfidf = TfidfVectorizer(stop_words='english')
+features_matrix = tfidf.fit_transform(peliculas['combined_features'].fillna(''))
+
+# Calcular la similitud de coseno entre las características de todas las películas
+cosine_sim = linear_kernel(features_matrix, features_matrix)
+
 indices = pd.Series(peliculas.index, index=peliculas['title']).drop_duplicates()
 
 # Crear la instancia de FastAPI
@@ -144,34 +147,22 @@ def get_director(nombre_director: str):
         'peliculas': peliculas_info
     }
     
-@app.get('/recomendacion/{titulo}', response_model=List[str])
-def recomendacion(titulo: str):
+@app.get('/recomendacion/caracteristicas/{titulo}', response_model=Union[List[str], dict])
+def recommend_movies_by_features(titulo: str):
     try:
-        # Convertir el título de búsqueda a minúsculas
-        titulo = titulo.lower()
-
-        # Obtener el índice de la película en el DataFrame
-        idx = indices[titulo]
-
-        # Obtener los scores de similitud de la película con todas las demás
+        idx = indices[indices.index == titulo].iloc[0]
         sim_scores = list(enumerate(cosine_sim[idx]))
-
-        # Eliminar puntuaciones de baja similitud
+        # Eliminar puntuaciones de baja similitud para reducir el uso de memoria
         sim_scores = [item for item in sim_scores if item[1] > 0.1]
-
-        # Ordenar las películas según el score de similitud en orden descendente
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-        # Obtener los índices de las películas más similares
-        movie_indices = [i[0] for i in sim_scores[:5]]  # Recomendar las 5 películas más similares
-
-        # Obtener los títulos de las películas recomendadas
+        sim_scores = sim_scores[1:6]
+        movie_indices = [i[0] for i in sim_scores]
         movie_titles = peliculas.iloc[movie_indices]['title'].tolist()
-
         return movie_titles
-
     except KeyError:
         return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
     except IndexError:
         return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
+
+   
 
