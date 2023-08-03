@@ -134,17 +134,18 @@ def get_director(nombre_director: str):
         'peliculas': peliculas_info
     }
     
-@app.get('/recomendacion/{titulo}', response_model=Union[List[str], dict])
+@app.get('/recomendacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
     try:
         recomendaciones = peliculas.loc[peliculas['title'] == titulo, 'recomendacion'].iloc[0]
-        return recomendaciones
+        if isinstance(recomendaciones, list):
+            return recomendaciones
+        else:
+            return []
     except KeyError:
-        return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
+        return []
     except IndexError:
-        return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
-    except Exception as e:
-        return {'message': str(e)}
+        return []
 
    
 
