@@ -137,13 +137,14 @@ def get_director(nombre_director: str):
 @app.get('/recomendacion/{titulo}', response_model=Union[List[str], dict])
 def recomendacion(titulo: str):
     try:
-        # Obtener la recomendación de la película usando la función 'at'
-        recomendaciones = peliculas.at[peliculas.index[0], 'recomendacion']
+        recomendaciones = peliculas.loc[peliculas['title'] == titulo, 'recomendacion'].iloc[0]
         return recomendaciones
     except KeyError:
         return {'message': f'No se encuentra la película "{titulo}" en el conjunto de datos'}
     except IndexError:
         return {'message': f'No se pudo obtener la recomendación para la película "{titulo}"'}
+    except Exception as e:
+        return {'message': str(e)}
 
    
 
