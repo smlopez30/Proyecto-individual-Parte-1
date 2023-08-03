@@ -138,10 +138,7 @@ def get_director(nombre_director: str):
 def recomendacion(titulo: str):
     try:
         recomendaciones = peliculas.loc[peliculas['title'] == titulo, 'recomendacion'].iloc[0]
-        if isinstance(recomendaciones, list):
-            return recomendaciones
-        else:
-            return []
+        return recomendaciones if isinstance(recomendaciones, list) else []
     except KeyError:
         return []
     except IndexError:
