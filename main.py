@@ -1,12 +1,14 @@
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from typing import List, Union
-
+import ast
 
 
 
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
+
+peliculas['recomendacion'] = peliculas['recomendacion'].apply(ast.literal_eval)
 
 # Crear la instancia de FastAPI
 app = FastAPI()
@@ -137,12 +139,14 @@ def get_director(nombre_director: str):
 @app.get('/recomendacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
     try:
-        recomendaciones = peliculas.loc[peliculas['title'] == titulo, 'recomendacion'].iloc[0]
-        return recomendaciones if isinstance(recomendaciones, list) else []
-    except KeyError:
-        return []
+        print(f'Título ingresado: {titulo}')
+        titulo = titulo.strip().lower()  # Eliminar espacios adicionales y convertir a minúsculas
+        print(f'Título formateado: {titulo}')
+        peliculas_filtradas = peliculas.loc[peliculas['title'].str.strip().str.lower() == titulo, 'recomendacion']
+        if not peliculas_filtradas.empty:
+            recomendaciones = peliculas_filtradas.iloc[0]
+            return recomendaciones if isinstance(recomendaciones, list) else []
+        else:
+            return ['Título no encontrado']
     except IndexError:
-        return []
-
-   
-
+        return ['Título no encontrado']
