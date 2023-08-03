@@ -1,8 +1,9 @@
 import pandas as pd
 from fastapi import FastAPI
-from typing import List
+from typing import List, Union
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+
 
 
 # Cargar el dataset "peliculas"
