@@ -7,16 +7,16 @@ from sklearn.metrics.pairwise import linear_kernel
 
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
-recomendacion = pd.read_csv('datasets/peliculas_procesadas.csv')
+
 
 # Manejar los valores NaN en la columna 'overview' (resumen)
-recomendacion['overview'].fillna('', inplace=True)
+peliculas['overview'].fillna('', inplace=True)
 
 # Preprocesamiento de texto para la columna 'overview'
 tfidf_vectorizer = TfidfVectorizer(stop_words='english')
-tfidf_matrix = tfidf_vectorizer.fit_transform(recomendacion['overview'])
+tfidf_matrix = tfidf_vectorizer.fit_transform(peliculas['overview'])
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-indices = pd.Series(recomendacion.index, index=recomendacion['title']).drop_duplicates()
+indices = pd.Series(peliculas.index, index=peliculas['title']).drop_duplicates()
 
 # Crear la instancia de FastAPI
 app = FastAPI()
@@ -166,7 +166,7 @@ def recomendacion(titulo: str):
         movie_indices = [i[0] for i in sim_scores[:5]]  # Recomendar las 5 películas más similares
 
         # Obtener los títulos de las películas recomendadas
-        movie_titles = recomendacion.iloc[movie_indices]['title'].tolist()
+        movie_titles = peliculas.iloc[movie_indices]['title'].tolist()
 
         return movie_titles
 
