@@ -8,7 +8,7 @@ import ast
 # Cargar el dataset "peliculas"
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
-peliculas['recomendacion'] = peliculas['recomendacion'].apply(ast.literal_eval)
+peliculas['recs'] = peliculas['recs'].apply(ast.literal_eval)
 
 # Crear la instancia de FastAPI
 app = FastAPI()
@@ -45,7 +45,7 @@ def peliculas_duracion(pelicula: str):
         return {'pelicula': pelicula, 'peliculas_coincidentes': []}
 
     # Seleccionar solo las columnas de interés (nombre, duración y año)
-    peliculas_coincidentes = peliculas_filtradas[['title', 'runtime', 'release_year']].to_dict(orient='records')
+    peliculas_coincidentes = peliculas_filtradas[['title', 'runtime', 'release_year']].to_dict(orient='recsords')
 
     return {'pelicula': peliculas_coincidentes}
 
@@ -94,27 +94,27 @@ def productoras_exitosas(productora: str):
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
 
 
-@app.get('/get_director/{nombre_director}')
-def get_director(nombre_director: str):
-    ''' Se ingresa el nombre de un director que se encuentre dentro de un dataset deviendo devolver el éxito del mismo medido a través del retorno.
+@app.get('/get_direcstor/{nombre_direcstor}')
+def get_direcstor(nombre_direcstor: str):
+    ''' Se ingresa el nombre de un direcstor que se encuentre dentro de un dataset deviendo devolver el éxito del mismo medido a través del retorno.
     Además, deberá devolver el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma. En formato lista'''
 
     # Convertir la cadena de búsqueda a minúsculas
-    nombre_director = nombre_director.lower()
+    nombre_direcstor = nombre_direcstor.lower()
 
-    # Filtrar el DataFrame para obtener las películas dirigidas por el director ingresado
-    peliculas_director = peliculas[peliculas['director'].str.lower() == nombre_director]
+    # Filtrar el DataFrame para obtener las películas dirigidas por el direcstor ingresado
+    peliculas_direcstor = peliculas[peliculas['direcstor'].str.lower() == nombre_direcstor]
 
-    # Verificar si se encontraron películas del director
-    if peliculas_director.empty:
-        return {'director': nombre_director, 'mensaje': 'Director no encontrado'}
+    # Verificar si se encontraron películas del direcstor
+    if peliculas_direcstor.empty:
+        return {'direcstor': nombre_direcstor, 'mensaje': 'Direcstor no encontrado'}
 
-    # Calcular el éxito del director medido a través del retorno (promedio de ganancias de sus películas)
-    retorno_total_director = peliculas_director['revenue'].mean()
+    # Calcular el éxito del direcstor medido a través del retorno (promedio de ganancias de sus películas)
+    retorno_total_direcstor = peliculas_direcstor['revenue'].mean()
 
-    # Crear una lista de información de cada película del director
+    # Crear una lista de información de cada película del direcstor
     peliculas_info = []
-    for _, pelicula in peliculas_director.iterrows():
+    for _, pelicula in peliculas_direcstor.iterrows():
         # Verificar si el costo de la película es cero para evitar la división por cero
         if pelicula['budget'] != 0:
             retorno_individual = pelicula['revenue'] / pelicula['budget']
@@ -131,21 +131,21 @@ def get_director(nombre_director: str):
         peliculas_info.append(pelicula_info)
 
     return {
-        'director': nombre_director,
-        'retorno_total_director': retorno_total_director,
+        'direcstor': nombre_direcstor,
+        'retorno_total_direcstor': retorno_total_direcstor,
         'peliculas': peliculas_info
     }
     
-@app.get('/recomendacion/{titulo}', response_model=List[str])
+@app.get('/recomedacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
     try:
         print(f'Título ingresado: {titulo}')
         titulo = titulo.strip().lower()  # Eliminar espacios adicionales y convertir a minúsculas
         print(f'Título formateado: {titulo}')
-        peliculas_filtradas = peliculas.loc[peliculas['title'].str.strip().str.lower() == titulo, 'recomendacion']
+        peliculas_filtradas = peliculas.loc[peliculas['title'].str.strip().str.lower() == titulo, 'recs']
         if not peliculas_filtradas.empty:
-            recomendaciones = peliculas_filtradas.iloc[0]
-            return recomendaciones if isinstance(recomendaciones, list) else []
+            recses = peliculas_filtradas.iloc[0]
+            return recses if isinstance(recses, list) else []
         else:
             return ['Título no encontrado']
     except IndexError:
