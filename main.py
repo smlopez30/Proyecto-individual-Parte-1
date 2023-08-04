@@ -143,19 +143,14 @@ def recomendacion(titulo: str):
         titulo = titulo.strip().lower()  # Eliminar espacios adicionales y convertir a minúsculas
         print(f'Título formateado: {titulo}')
         peliculas_filtradas = peliculas.loc[peliculas['title'].str.strip().str.lower() == titulo, 'recs']
-
         if not peliculas_filtradas.empty:
             recses = peliculas_filtradas.iloc[0]
-
-            if isinstance(recses, str):
-                return [recses]  # Si es una cadena, devuelve una lista con la cadena
-            elif isinstance(recses, list):
-                return recses  # Si es una lista, devuelve la lista
+            if isinstance(recses, list):
+                return recses
             else:
-                return []  # Si no es una cadena ni una lista, devuelve una lista vacía
-
+                return [recses]  # Devuelve el mensaje de texto en una lista
         else:
             return ['Título no encontrado']
-
     except IndexError:
         return ['Título no encontrado']
+
