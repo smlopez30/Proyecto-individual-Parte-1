@@ -18,7 +18,7 @@ Se realizaron algunas transformaciones a los datasets originales tales como:
 + Se creó la variable **`recs`**, la cual contiene una lista de películas similares y que es utilizada por la API para el sistema de recomendación. La similaridad entre películas fue calculada a partir de una matriz de similaridad coseno utilizando la frecuencia de términos-frecuencia inversa del documento (**`tf-idf`**) en los campos **`title`** y **`overview`**.
 + Con la intención de volver más eficientes las consultas, se crearon datasets particulares para cada función de la API.
 
-Estas tareas se realizaron en una [Jupyter Notebook](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/Henry_PI_MLops.ipynb) con VSS Code y se subieron a GitHub. Se utilizaron librerías como Pandas, Numpy, Json, Matplotlib.pyplot y Scikit-learn.
+Estas tareas se realizaron en una [Jupyter Notebook](https://github.com/smlopez30/Proyecto-individual-Parte-1) con VSS Code y se subieron a GitHub. Se utilizaron librerías como Pandas, Numpy, Json, Matplotlib.pyplot y Scikit-learn.
 
 **`Análisis exploratorio de los datos`**: _(Exploratory Data Analysis-EDA)_
 
@@ -32,12 +32,12 @@ Al analizar las fechas de estreno, se detectó un crecimiento en la cantidad de 
 
 Finalmente, se analizaron métricas relacionadas a los directores (**`budget`**) como cantidad de películas dirigidas, retorno total y promedio. Si bien entre las últimas dos métricas no se detectaron cambios en los primeron 10 puestos, los directores con mayor cantidad de películas resultaron muy diferentes.
 
-Este EDA se puede consultar en la sección 4 de la [Jupyter Notebook](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/Henry_PI_MLops.ipynb). Se utilizaron librerías como Pandas, Numpy, Json, Seaborn, Matplotlib.pyplot y Wordcloud.
+Este EDA se puede consultar en la sección 4 de la [Jupyter Notebook](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/DataEingenier.ipynb). Se utilizaron librerías como Pandas, Numpy, Json, Seaborn, Matplotlib.pyplot y Wordcloud.
 #API
 
 **`Desarrollo de la API y despliegue`**
 
-La API fue desarrollada con el entorno de trabajo [FastAPI](https://fastapi.tiangolo.com/) en lenguaje Python. Se optó por este _(web framework)_ por su buena performance y la facilidad de poder ser construido en un lenguaje sumamente difundido con Python. El [código principal](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/main.py) cuenta con las funciones para cada uno de los _(endpoints)_. Además, se pueden consultar las [librerías](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/requirements.txt) necesarias para su funcionamiento.
+La API fue desarrollada con el entorno de trabajo [FastAPI](https://fastapi.tiangolo.com/) en lenguaje Python. Se optó por este _(web framework)_ por su buena performance y la facilidad de poder ser construido en un lenguaje sumamente difundido con Python. El [código principal](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/main.py) cuenta con las funciones para cada uno de los _(endpoints)_. Además, se pueden consultar las [librerías](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/requirements.txt) necesarias para su funcionamiento.
 
 El despliegue (_(deployment)_) lo realicé como un _(web service)_ en la nube de [Render](https://render.com/). La configuración utilizada se puede consultar [aquí](https://github.com/HX-FNegrete/render-fastapi-tutorial.git). Esta opción resultó sumamente ágil para los fines del presente proyecto, además de contar con un plan gratuito. La documentación sobre el servicio se encuentra disponible [aquí](https://pi-juanpablopicasso.onrender.com/docs).
 
