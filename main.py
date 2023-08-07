@@ -96,10 +96,10 @@ def productoras_exitosas(productora: str):
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
 
 
-@app.get('/get_director/{director}')
-def get_director(nombre_director : str):
+@@app.get('/get_director/{director}')
+def get_director(director: str):
     # Filtrar el dataset peliculas para obtener solo las películas del director dado
-    director_movies = peliculas[peliculas['director'] == nombre_director]
+    director_movies = peliculas[peliculas['director'] == director]
     
     # Calcular el éxito general del director basado en la suma de revenues / suma de budgets
     total_revenue = director_movies['revenue'].sum()
@@ -130,9 +130,10 @@ def get_director(nombre_director : str):
 
     return {
         'director': director,
-        'retorno_total_director': retorno_total_director,
+        'retorno_total_director': director_success,
         'peliculas': peliculas_info
     }
+
     
 @app.get('/recomendacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
