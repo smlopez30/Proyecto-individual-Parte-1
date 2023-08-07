@@ -96,30 +96,26 @@ def productoras_exitosas(productora: str):
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
 
 
-@app.get('/get_direcomendaciontor/{nombre_direcomendaciontor}')
-def get_direcomendaciontor(nombre_direcomendaciontor: str):
-    ''' Se ingresa el nombre de un direcomendaciontor que se encuentre dentro de un dataset deviendo devolver el éxito del mismo medido a través del retorno.
-    Además, deberá devolver el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma. En formato lista'''
+@app.get('/get_director/{director}')
+def get_director(nombre_director : str):
+    # Filtrar el dataset peliculas para obtener solo las películas del director dado
+    director_movies = peliculas[peliculas['director'] == nombre_director]
+    
+    # Calcular el éxito general del director basado en la suma de revenues / suma de budgets
+    total_revenue = director_movies['revenue'].sum()
+    total_budget = director_movies['budget'].sum()
+    
+    if total_budget == 0:
+        director_success = None  # O podrías manejarlo de otra manera si el total del budget es cero
+    else:
+        director_success = total_revenue / total_budget
 
-    # Convertir la cadena de búsqueda a minúsculas
-    nombre_direcomendaciontor = nombre_direcomendaciontor.lower()
-
-    # Filtrar el DataFrame para obtener las películas dirigidas por el direcomendaciontor ingresado
-    peliculas_direcomendaciontor = peliculas[peliculas['direcomendaciontor'].str.lower() == nombre_direcomendaciontor]
-
-    # Verificar si se encontraron películas del direcomendaciontor
-    if peliculas_direcomendaciontor.empty:
-        return {'direcomendaciontor': nombre_direcomendaciontor, 'mensaje': 'Direcomendaciontor no encontrado'}
-
-    # Calcular el éxito del direcomendaciontor medido a través del retorno (promedio de ganancias de sus películas)
-    retorno_total_direcomendaciontor = peliculas_direcomendaciontor['revenue'].mean()
-
-    # Crear una lista de información de cada película del direcomendaciontor
+    # Crear una lista de información de cada película del director
     peliculas_info = []
-    for _, pelicula in peliculas_direcomendaciontor.iterrows():
+    for _, pelicula in director_movies.iterrows():
         # Verificar si el costo de la película es cero para evitar la división por cero
         if pelicula['budget'] != 0:
-            retorno_individual = pelicula['revenue'] / pelicula['budget']
+            retorno_individual = pelicula['return']
         else:
             retorno_individual = 0  # O podrías asignar otro valor predeterminado
 
@@ -133,8 +129,8 @@ def get_direcomendaciontor(nombre_direcomendaciontor: str):
         peliculas_info.append(pelicula_info)
 
     return {
-        'direcomendaciontor': nombre_direcomendaciontor,
-        'retorno_total_direcomendaciontor': retorno_total_direcomendaciontor,
+        'director': director,
+        'retorno_total_director': retorno_total_director,
         'peliculas': peliculas_info
     }
     
