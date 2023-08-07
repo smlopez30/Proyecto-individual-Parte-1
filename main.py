@@ -96,7 +96,7 @@ def productoras_exitosas(productora: str):
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
 
 
-@@app.get('/get_director/{director}')
+@app.get('/get_director/{director}')
 def get_director(director: str):
     # Filtrar el dataset peliculas para obtener solo las películas del director dado
     director_movies = peliculas[peliculas['director'] == director]
