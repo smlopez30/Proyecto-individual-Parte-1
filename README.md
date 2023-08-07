@@ -49,7 +49,7 @@ Consultas disponibles de la [API](https://desarrollo-api-tm9i.onrender.com/)
 + Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo
 + Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.
 + Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.
-+ Recomendación de películas: Devuelve 5 títulos de películas similares al título de la película consultada. Las recomendaciones se basan en el criterio detallado en la sección de **Preprocesamiento**.
++ Se ingresa el titulo de la una pelicula (en ingles), entregandote 5 titulos recomendados. Las recomendaciones se basan en el criterio detallado en la sección de **[Sistema de recomendacion de peliculas]()**.
 
 **`Demo`**
 

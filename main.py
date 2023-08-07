@@ -3,6 +3,11 @@ from fastapi import FastAPI, Query
 from typing import List, Union
 import ast
 
+description = """
+Este sistema permite realizar diversas consultas sobre películas, actores y directores, y, además, es posible
+solicitar recomendaciones a partir de una película en particular. 🚀
+"""
+
 app = FastAPI(title="Sistema de Recomendación de Películas",
     description=description,
     version="0.0.1",
@@ -10,7 +15,8 @@ app = FastAPI(title="Sistema de Recomendación de Películas",
         "nombre": "Sergio Miguel Lopez",
         "GitHub": "https://github.com/smlopez30",
         "email": "smlopez@gmail.com",
-    },)
+    }
+)
 
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
