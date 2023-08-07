@@ -3,11 +3,18 @@ from fastapi import FastAPI, Query
 from typing import List, Union
 import ast
 
+app = FastAPI(title="Sistema de Recomendación de Películas",
+    description=dDescripcion,
+    version="0.0.1",
+    contact={
+        "nombre": "Sergio Miguel Lopez",
+        "GitHub": "https://github.com/smlopez30",
+        "email": "smlopez@gmail.com",
+    },)
+
 peliculas = pd.read_csv('datasets/peliculas.csv')
 
 peliculas['recomendacion'] = peliculas['recomendacion'].apply(ast.literal_eval)
-
-app = FastAPI()
 
 @app.get('/peliculas_idioma/{ej. es}')
 def peliculas_idioma(idioma:str):
@@ -78,7 +85,7 @@ def productoras_exitosas(productora: str):
 
 @app.get('/get_director/{nombre_director}')
 def get_director(nombre_director: str):
-  
+    '''Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.'''
     director_movies = peliculas[peliculas['director'] == nombre_director]
     
     if director_movies.empty:
@@ -116,6 +123,7 @@ def get_director(nombre_director: str):
     
 @app.get('/recomendacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
+    '''Se ingresa el titulo de la una pelicula (en ingles), entregandote 5 titulos recomendados.'''
     try:
         print(f'Título ingresado: {titulo}')
         pelicula = peliculas[peliculas['title'].str.contains(titulo, case=False)]
