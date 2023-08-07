@@ -4,7 +4,7 @@ from typing import List, Union
 import ast
 
 app = FastAPI(title="Sistema de Recomendación de Películas",
-    description=dDescripcion,
+    description=description,
     version="0.0.1",
     contact={
         "nombre": "Sergio Miguel Lopez",

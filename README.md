@@ -37,18 +37,18 @@ Este EDA se puede consultar en la sección 4 de la [Jupyter Notebook](https://gi
 
 **`Desarrollo de la API y despliegue`**
 
-La API fue desarrollada con el entorno de trabajo [FastAPI](https://fastapi.tiangolo.com/) en lenguaje Python. Se optó por este _(web framework)_ por su buena performance y la facilidad de poder ser construido en un lenguaje sumamente difundido con Python. El [código principal](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/main.py) cuenta con las funciones para cada uno de los _(endpoints)_. Además, se pueden consultar las [librerías](https://github.com/picassojp/Henry-PI-MLops/blob/a233f3ed614419a95a80772bd9061144ebad1989/requirements.txt) necesarias para su funcionamiento.
+La API fue desarrollada con el entorno de trabajo [FastAPI](https://fastapi.tiangolo.com/) en lenguaje Python. Se optó por este _(web framework)_ por su buena performance y la facilidad de poder ser construido en un lenguaje sumamente difundido con Python. El [código principal](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/main.py) cuenta con las funciones para cada uno de los _(endpoints)_. Además, se pueden consultar las [librerías](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/requirements.txt) necesarias para su funcionamiento.
 
-El despliegue (_(deployment)_) lo realicé como un _(web service)_ en la nube de [Render](https://render.com/). La configuración utilizada se puede consultar [aquí](https://github.com/HX-FNegrete/render-fastapi-tutorial.git). Esta opción resultó sumamente ágil para los fines del presente proyecto, además de contar con un plan gratuito. La documentación sobre el servicio se encuentra disponible [aquí](https://pi-juanpablopicasso.onrender.com/docs).
+El despliegue (_(deployment)_) lo realicé como un _(web service)_ en la nube de [Render](https://render.com/). La configuración utilizada se puede consultar [aquí](https://github.com/HX-FNegrete/render-fastapi-tutorial.git). Esta opción resultó sumamente ágil para los fines del presente proyecto, además de contar con un plan gratuito. La documentación sobre el servicio se encuentra disponible [aquí](https://desarrollo-api-tm9i.onrender.com/docs).
 
-Consultas disponibles de la [API](https://pi-juanpablopicasso.onrender.com)
+Consultas disponibles de la [API](https://desarrollo-api-tm9i.onrender.com/)
 
-+ Cantidad de filmaciones por mes: Permite consultar la cantidad de películas que fueron estrenadas en el mes consultado (en idioma español).
-+ Cantidad de filmaciones por día de la semana: Permite consultar la cantidad de películas que fueron estrenadas en el día de la semana consultado (en idioma español).
-+ Puntuación de una película: Permite consultar el título de la película consultada, el año de estreno y su puntuación en términos de popularidad según TMDB (TheMoviesDataBase).
-+ Votos de una película: Devuelve el promedio de votos de la película consultada junto con el año de estreno y la cantidad total de votos según TMDB (TheMoviesDataBase). La película debe contar con al menos 2000 votos para ser considerada en la consulta.
-+ Información de actores: Devuelve la cantidad de películas en las que el actor consultado ha participado, el retorno total conseguido y el retorno promedio por película.
-+ Información de directores: Devuelve el retorno total conseguido por las películas del director consultado y un detalle con 5 de sus películas, incluyendo título, fecha de lanzamiento, retorno, presupuesto y recaudación de cada una.
++ Ingresas el idioma (en formato ISO 639-1 ), retornando la cantidad de peliculas producidas en el mismo
++ Ingresas el titulo pelicula (en ingles), retornando la duracion y el año de todas las películas que coinciden con el nombre.
++ Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio
++ Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo
++ Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.
++ Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.
 + Recomendación de películas: Devuelve 5 títulos de películas similares al título de la película consultada. Las recomendaciones se basan en el criterio detallado en la sección de **Preprocesamiento**.
 
 **`Demo`**
