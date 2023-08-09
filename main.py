@@ -22,15 +22,19 @@ peliculas = pd.read_csv('datasets/peliculas.csv')
 
 peliculas['recomendacion'] = peliculas['recomendacion'].apply(ast.literal_eval)
 
-@app.get('/peliculas_idioma/{ej. es}')
-def peliculas_idioma(idioma:str):
+@app.get('/peliculas_idioma/{idioma}')
+def peliculas_idioma(idioma: str):
     '''Ingresas el idioma, retornando la cantidad de peliculas producidas en el mismo'''
+    
+    if idioma not in peliculas['idioma'].unique():
+        return {'error': 'Idioma no encontrado en el conjunto de datos.'}
     
     peliculas_filtradas = peliculas[peliculas['idioma'] == idioma]
 
     cantidad_peliculas = len(peliculas_filtradas)
 
     return {'idioma': idioma, 'cantidad': cantidad_peliculas}
+
 
 @app.get('/peliculas_duracion/{pelicula}')
 def peliculas_duracion(pelicula: str):
@@ -74,58 +78,74 @@ def franquicia(franquicia: str):
 def peliculas_pais(pais: str):
     '''Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo.'''
    
+    # Verificar si el país está en la columna 'pais'
+    if not any(pais.lower() in str(x).lower() for x in peliculas['pais']):
+        return f'No se encontraron datos para el país solicitado: {pais}'
+
     peliculas_pais = peliculas[peliculas['pais'].str.contains(pais, case=False)]
 
     cantidad_peliculas = len(peliculas_pais)
 
     return f'Se produjeron {cantidad_peliculas} películas en el país {pais}'
 
+
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
     '''Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.'''
+    
+    # Verificar si la productora está en la columna 'productora'
+    if not any(productora in x for x in peliculas['productora'].apply(lambda x: x if isinstance(x, list) else [])):
+        return f'No se encontraron datos para la productora solicitada: {productora}'
+
     peliculas_productora = peliculas[peliculas['productora'].apply(lambda x: productora in x)]
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora['revenue'].sum()
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
 
 
+
 @app.get('/get_director/{nombre_director}')
 def get_director(nombre_director: str):
     '''Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.'''
-    director_movies = peliculas[peliculas['director'] == nombre_director]
-    
-    if director_movies.empty:
-        raise HTTPException(status_code=404, detail="Director no encontrado")
+    try:
+        director_movies = peliculas[peliculas['director'].str.strip() == nombre_director.strip()]
+        
+        if director_movies.empty:
+            return {'error': 'Director no encontrado', 'director': nombre_director}
 
-    total_revenue = director_movies['revenue'].sum()
-    total_budget = director_movies['budget'].sum()
-    
-    if total_budget == 0:
-        director_success = None
-    else:
-        director_success = total_revenue / total_budget
-
-    peliculas_info = []
-    for _, pelicula in director_movies.iterrows():
-        if pelicula['budget'] != 0:
-            retorno_individual = pelicula['return']
+        total_revenue = director_movies['revenue'].sum()
+        total_budget = director_movies['budget'].sum()
+        
+        if total_budget == 0:
+            director_success = None
         else:
-            retorno_individual = None
+            director_success = total_revenue / total_budget
 
-        pelicula_info = {
-            'nombre': pelicula.get('title', 'Desconocido'),
-            'fecha_lanzamiento': pelicula.get('release_date', 'Desconocido'),
-            'retorno_individual': retorno_individual,
-            'costo_pelicula': pelicula['budget'],
-            'ganancia_pelicula': pelicula['revenue']
+        peliculas_info = []
+        for _, pelicula in director_movies.iterrows():
+            if pelicula['budget'] != 0:
+                retorno_individual = pelicula['return']
+            else:
+                retorno_individual = None
+
+            pelicula_info = {
+                'nombre': pelicula.get('title', 'Desconocido'),
+                'fecha_lanzamiento': pelicula.get('release_date', 'Desconocido'),
+                'retorno_individual': retorno_individual,
+                'costo_pelicula': pelicula['budget'],
+                'ganancia_pelicula': pelicula['revenue']
+            }
+            peliculas_info.append(pelicula_info)
+
+        return {
+            'director': nombre_director,
+            'retorno_total_director': director_success,
+            'peliculas': peliculas_info
         }
-        peliculas_info.append(pelicula_info)
+    except Exception as e:
+        return {'error': str(e), 'director': nombre_director}
 
-    return {
-        'director': nombre_director,
-        'retorno_total_director': director_success,
-        'peliculas': peliculas_info
-    }
+
     
 @app.get('/recomendacion/{titulo}', response_model=List[str])
 def recomendacion(titulo: str):
