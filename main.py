@@ -6,6 +6,7 @@ import ast
 description = """
 Este sistema permite realizar diversas consultas sobre películas, actores y directores, y, además, es posible
 solicitar recomendaciones a partir de una película en particular. 🚀
+El trabajo completo los pueden encontrar en Github: https://github.com/smlopez30/Proyecto-individual-Parte-1
 """
 
 app = FastAPI(title="Sistema de Recomendación de Películas",
