@@ -92,14 +92,8 @@ def peliculas_pais(pais: str):
 
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
-    # Convierte la productora a minúsculas para la búsqueda
-    productora_lower = productora.lower()
-    
-    # Verificar si la productora está en la columna 'productora', convirtiendo las productoras en la lista a minúsculas
-    if not any(productora_lower in map(str.lower, x) for x in peliculas['productora'].apply(lambda x: x if isinstance(x, list) else [])):
-        return f'No se encontraron datos para la productora solicitada: {productora}'
-
-    peliculas_productora = peliculas[peliculas['productora'].apply(lambda x: productora_lower in map(str.lower, x) if isinstance(x, list) else False)]
+    '''Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.'''
+    peliculas_productora = peliculas[peliculas['productora'].apply(lambda x: productora in x)]
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora['revenue'].sum()
     return f'La productora {productora} ha tenido un revenue de {revenue_total} y ha realizado {cantidad_peliculas} películas.'
