@@ -3,3 +3,4 @@ fastapi==0.100.1
 typing==3.7.4.3
 typing_extensions==4.7.1
 uvicorn==0.15.0
+fuzzywuzzy

@@ -2,6 +2,8 @@ import pandas as pd
 from fastapi import FastAPI, Query
 from typing import List, Union
 import ast
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 description = """
 Este sistema permite realizar diversas consultas sobre películas, actores y directores, y, además, es posible
@@ -62,18 +64,24 @@ def franquicia(franquicia: str):
 
     franquicia = franquicia.lower()
 
-    peliculas_franquicia = peliculas[peliculas['franquicia'].str.lower() == franquicia]
+    # Obtener todas las franquicias únicas
+    franquicias_unicas = peliculas['franquicia'].str.lower().unique()
 
-    if peliculas_franquicia.empty:
+    # Encontrar la franquicia más similar utilizando fuzzywuzzy
+    franquicia_similar = process.extractOne(franquicia, franquicias_unicas, scorer=fuzz.token_set_ratio)
+
+    if franquicia_similar is None or franquicia_similar[1] < 80:
         return {'franquicia': franquicia, 'mensaje': 'Franquicia no encontrada'}
 
+    franquicia_encontrada = franquicia_similar[0]
+
+    peliculas_franquicia = peliculas[peliculas['franquicia'].str.lower() == franquicia_encontrada]
+
     cantidad_peliculas = len(peliculas_franquicia)
-
     ganancia_total = peliculas_franquicia['revenue'].sum()
-
     ganancia_promedio = peliculas_franquicia['revenue'].mean()
 
-    return {'franquicia': franquicia, 'cantidad': cantidad_peliculas, 'ganancia_total': ganancia_total, 'ganancia_promedio': ganancia_promedio}
+    return {'franquicia': franquicia_encontrada, 'cantidad': cantidad_peliculas, 'ganancia_total': ganancia_total, 'ganancia_promedio': ganancia_promedio}
 
 @app.get('/peliculas_pais/{pais}')
 def peliculas_pais(pais: str):
@@ -88,7 +96,6 @@ def peliculas_pais(pais: str):
     cantidad_peliculas = len(peliculas_pais)
 
     return f'Se produjeron {cantidad_peliculas} películas en el país {pais}'
-
 
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
