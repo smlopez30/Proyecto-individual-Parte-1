@@ -25,9 +25,9 @@ peliculas = pd.read_csv('datasets/peliculas.csv')
 
 peliculas['recomendacion'] = peliculas['recomendacion'].apply(ast.literal_eval)
 
-@app.get('/peliculas_idioma/{idioma}')
+@app.get('/peliculas_idioma/{ej:es}')
 def peliculas_idioma(idioma: str):
-    '''Ingresas el idioma, retornando la cantidad de peliculas producidas en el mismo'''
+    '''Ingresas el idioma en formato ISO 639-1, retornando la cantidad de peliculas producidas en el mismo'''
     
     if idioma not in peliculas['idioma'].unique():
         return {'error': 'Idioma no encontrado en el conjunto de datos.'}
@@ -39,7 +39,7 @@ def peliculas_idioma(idioma: str):
     return {'idioma': idioma, 'cantidad': cantidad_peliculas}
 
 
-@app.get('/peliculas_duracion/{pelicula}')
+@app.get('/peliculas_duracion/{ej:Toy Story}')
 def peliculas_duracion(pelicula: str):
     '''Ingresas la pelicula, retornando la duracion y el año de todas las películas que coinciden con el nombre'''
 
@@ -58,9 +58,9 @@ def peliculas_duracion(pelicula: str):
 
     return {'pelicula': peliculas_coincidentes}
 
-@app.get('/franquicia/{franquicia}')
+@app.get('/franquicia/{ej:Avatar}')
 def franquicia(franquicia: str):
-    '''Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio'''
+    '''Se ingresa el nombre de la coleccion (no hace falta que sea el nombre completo), retornando la cantidad de peliculas, ganancia total y promedio'''
 
     franquicia = franquicia.lower()
 
@@ -83,7 +83,7 @@ def franquicia(franquicia: str):
 
     return {'franquicia': franquicia_encontrada, 'cantidad': cantidad_peliculas, 'ganancia_total': ganancia_total, 'ganancia_promedio': ganancia_promedio}
 
-@app.get('/peliculas_pais/{pais}')
+@app.get('/peliculas_pais/{ej:Argentina}')
 def peliculas_pais(pais: str):
     '''Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo.'''
    
@@ -97,9 +97,9 @@ def peliculas_pais(pais: str):
 
     return f'Se produjeron {cantidad_peliculas} películas en el país {pais}'
 
-@app.get('/productoras_exitosas/{productora}')
+@app.get('/productoras_exitosas/{ej:Twentieth Century Fox Film Corporation}')
 def productoras_exitosas(productora: str):
-    '''Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.'''
+    '''Se ingresa la productora (como están escritos en el dataset, no hay que traducirlos!), entregandote el revenue total y la cantidad de peliculas que realizo.'''
     peliculas_productora = peliculas[peliculas['productora'].apply(lambda x: productora in x)]
     cantidad_peliculas = len(peliculas_productora)
     revenue_total = peliculas_productora['revenue'].sum()
@@ -107,9 +107,9 @@ def productoras_exitosas(productora: str):
 
 
 
-@app.get('/get_director/{nombre_director}')
+@app.get('/get_director/{ej:James Cameron}')
 def get_director(nombre_director: str):
-    '''Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.'''
+    '''Se ingresa el nombre del director (como están escritos en el dataset), entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.'''
     try:
         director_movies = peliculas[peliculas['director'].str.strip() == nombre_director.strip()]
         
@@ -150,9 +150,9 @@ def get_director(nombre_director: str):
 
 
     
-@app.get('/recomendacion/{titulo}', response_model=List[str])
+@app.get('/recomendacion/{ej:Toy Story}', response_model=List[str])
 def recomendacion(titulo: str):
-    '''Se ingresa el titulo de la una pelicula (en ingles), entregandote 5 titulos recomendados.'''
+    '''Se ingresa el titulo de la una pelicula (como están escritos en el dataset, no hay que traducirlos!), entregandote 5 titulos recomendados.'''
     try:
         print(f'Título ingresado: {titulo}')
         pelicula = peliculas[peliculas['title'].str.contains(titulo, case=False)]
