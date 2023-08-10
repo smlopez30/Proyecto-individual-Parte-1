@@ -137,7 +137,7 @@ Consultas disponibles de la [API](https://desarrollo-api-tm9i.onrender.com/)
 
 [Fastapi desarrolla una documentacion del deploy en la que se puden probar todos los items del proyecto](https://desarrollo-api-tm9i.onrender.com/docs)
 
-Ademas, se encuentra disponible un [video](https://youtu.be/) sobre el funcionamiento de la API mediante ejemplos de consultas.
+Ademas, se encuentra disponible un [video](https://youtu.be/WY-HvTvJGx8) sobre el funcionamiento de la API mediante ejemplos de consultas.
 
 **`Mantenimiento`**
 Este proyecto está mantenido por Sergio Miguel Lopez. Si tienes alguna pregunta o encuentras algún problema, por favor, [contactame](https://www.linkedin.com/in/sergio-lopez-1149731a/).
