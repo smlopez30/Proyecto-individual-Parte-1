@@ -1,4 +1,4 @@
-<p align=center><img src=imagenes/portada.jpg><p>
+[<p align=center><img src=imagenes/portada.jpg><p>](https://desarrollo-api-tm9i.onrender.com/docs)
 
 <h1 align=center>**Proyecto Individual: Sistema de Recomendación de Películas**</h1>
 
@@ -118,17 +118,26 @@ El despliegue (_(deployment)_) lo realicé como un _(web service)_ en la nube de
 
 Consultas disponibles de la [API](https://desarrollo-api-tm9i.onrender.com/)
 
-+ Ingresas el idioma (en formato ISO 639-1 ), retornando la cantidad de peliculas producidas en el mismo
-+ Ingresas el titulo pelicula (en ingles), retornando la duracion y el año de todas las películas que coinciden con el nombre.
-+ Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio
-+ Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo
-+ Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo.
-+ Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue.
-+ Se ingresa el titulo de la una pelicula (en ingles), entregandote 5 titulos recomendados. Las recomendaciones se basan en el criterio detallado en la sección de **[Sistema de recomendacion de peliculas](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/DataEingenier.ipynb)**.
++ Ingresas el idioma (en formato ISO 639-1 ), retornando la cantidad de peliculas producidas en el mismo. [link directo a la seccion idioma con el idioma "en"](https://desarrollo-api-tm9i.onrender.com/peliculas_idioma/en)
+
++ Ingresas el titulo pelicula (en ingles), retornando la duracion y el año de todas las películas que coinciden con el nombre. [link directo a la seccion titulo de una pelicula el nombre de "Toy Story"](https://desarrollo-api-tm9i.onrender.com/peliculas_duracion/Toy%20Story)
+
++ Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio. [link directo a la seccion franquicia con una la coleccion de "Toy Story" de ejemplo"](https://desarrollo-api-tm9i.onrender.com/franquicia/Toy%20Story)
+
++ Se ingresa un país (como están escritos en el dataset, no hay que traducirlos!), retornando la cantidad de peliculas producidas en el mismo. [link directo a la seccion pais con el nombre de "Argentina" de ejemplo](https://desarrollo-api-tm9i.onrender.com/peliculas_pais/Argentina)
+
++ Se ingresa la productora, entregandote el revenue total y la cantidad de peliculas que realizo. [link directo a la seccion productora con el nombre "Pixar Animation Studios" de ejemplo](https://desarrollo-api-tm9i.onrender.com/productoras_exitosas/Pixar%20Animation%20Studios)
+
++ Se ingresa el nombre del director, entregandote el retorno individual y las peliculas que realizo con su retorno, el budget y el renue. [link directo a la seccion director con el nombre "John Lasseter" de ejemplo](https://desarrollo-api-tm9i.onrender.com/get_director/John%20Lasseter)
+
++ Se ingresa el titulo de la una pelicula (en ingles), entregandote 5 titulos recomendados. Las recomendaciones se basan en el criterio detallado en la sección de **[Sistema de recomendacion de peliculas](https://github.com/smlopez30/Proyecto-individual-Parte-1/blob/master/DataEingenier.ipynb)**. /
+[link directo a la seccion recomendacion con "Toy Story" de ejemplo](https://desarrollo-api-tm9i.onrender.com/recomendacion/Toy%20Story)
 
 **`Funcionamiento`**
 
-Se encuentra disponible un [video](https://youtu.be/YZQAjoHNTKk) sobre el funcionamiento de la API mediante ejemplos de consultas.
+[Fastapi desarrolla una documentacion del deploy en la que se puden probar todos los items del proyecto](https://desarrollo-api-tm9i.onrender.com/docs)
+
+Ademas, se encuentra disponible un [video](https://youtu.be/) sobre el funcionamiento de la API mediante ejemplos de consultas.
 
 **`Mantenimiento`**
-Este proyecto está mantenido por Juan Pablo Picasso. Si tienes alguna pregunta o encuentras algún problema, por favor, [contactame](https://www.linkedin.com/in/sergio-lopez-1149731a/).
+Este proyecto está mantenido por Sergio Miguel Lopez. Si tienes alguna pregunta o encuentras algún problema, por favor, [contactame](https://www.linkedin.com/in/sergio-lopez-1149731a/).
